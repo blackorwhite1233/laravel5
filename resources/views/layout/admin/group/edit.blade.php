@@ -56,8 +56,8 @@
 
                   <div class="row">
                     <div class="col-sm-9 col-sm-offset-3">
-                      <input type="submit" class="btn btn-success btn-quirk btn-wide mr5" value="Submit" />
-                      <input type="button" class="btn btn-quirk btn-wide btn-default" value="Back" />
+                      <input type="submit" class="btn btn-success btn-quirk btn-wide mr5" value="{{trans('admin.update')}}" />
+                      <input type="button" class="btn btn-quirk btn-wide btn-default" value="{{trans('admin.back')}}" />
                     </div>
                   </div>
 

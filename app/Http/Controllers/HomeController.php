@@ -1,5 +1,7 @@
 <?php namespace App\Http\Controllers;
-
+use Request;
+use Redirect;
+use Session;
 class HomeController extends Controller {
 
 	/*
@@ -20,7 +22,7 @@ class HomeController extends Controller {
 	 */
 	public function __construct()
 	{
-		$this->middleware('guest');
+		//$this->middleware('guest');
 	}
 
 	/**
@@ -37,4 +39,12 @@ class HomeController extends Controller {
 		return view('layout.default.index');
 	}
 
+	public function language(){
+		if(Request::input('lang') == '')
+			return  Redirect::back();
+
+		$lang = Request::input('lang');
+		Session::put('lang', $lang);
+		return  Redirect::back();
+	}
 }

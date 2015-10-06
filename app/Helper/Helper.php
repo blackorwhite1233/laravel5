@@ -15,7 +15,21 @@ class Helper {
     			if($option['type'] == "text"){
     				$result .= "<td><input type='text' name='$name' class='form-control' value='".$option['value']."' ></td>";
     			}
+                elseif($option['type'] == "radio"){
+                    $options = '';
 
+                    foreach($option['option'] as $v=>$o){
+                        $active = $option['value'] == $v ? 'selected' : '';
+                        $options .= '<option '.$active.' value="'.$v.'">'.$o.'</option>';
+                    }
+
+                    $result .= "<td><select name='$name' class='form-control'>
+                                    <option value=''>-- ".trans('admin.status')." --</option>
+                                    ".$options."
+                                </select></td>";
+                }else{
+                    $result .= "<td></td>";
+                }
 	    	}
 	    	$result .="<td></td>";
     	}
@@ -30,9 +44,16 @@ class Helper {
     		$result .= "<tr>";
     		$result .= "<td><label class='ckbox ckbox-success'><input name='destroy_id[]' value='".$item->$pri_key."' type='checkbox'><span></span></label></td>";
 	    	foreach($module as $name => $option){
-	    		$result .= "<td>".$item->$name."</td>";
+                if($option['type'] == "text"){
+	    	          $result .= "<td>".$item->$name."</td>";
+                }elseif($option['type'] == "radio"){
+                    $value = $item->$name;
+                    $result .= "<td>".$option['option'][$value]."</td>";
+                }elseif($option['type'] == "date"){
+                    $result .= "<td>".date('Y-m-d H:i:s', $item->$name)."</td>";
+                }
 	    	}
-            $result .= "<td><ul class='table-options'><li><a title='".trans('admin.edit')."' href='".URL::to("admin/")."/".$module_name.'/edit'."?id=".$item->$pri_key."'><i class='fa fa-pencil'></i></a></li><li><a title='".trans('admin.view')."' href='".URL::to('admin/group/detail')."?id=".$item->$pri_key."'><i class='fa fa-eye'></i></a></li></ul></td>";
+            $result .= "<td><ul class='table-options'><li><a title='".trans('admin.edit')."' href='".URL::to("admin/")."/".$module_name.'/edit'."?id=".$item->$pri_key."'><i class='fa fa-pencil'></i></a></li><li><a title='".trans('admin.view')."' href='".URL::to("admin/")."/".$module_name.'/detail'."?id=".$item->$pri_key."'><i class='fa fa-eye'></i></a></li></ul></td>";
 	    	$result .= "<tr></tr>";
 	    	$result .= "</tr>";
 	    }
@@ -93,7 +114,7 @@ class Helper {
             $from = (($page - 1) * $rows) + 1;
             $to = $page * $rows;
         }
-        $result = "Showing ".$from." to ".$to." of ".$total." entries";
+        $result = trans('admin.showing').$from.trans('admin.to').$to.trans('admin.of').$total.trans('admin.entries');
         return $result;
     }
 

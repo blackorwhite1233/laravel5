@@ -105,7 +105,7 @@ function update_out(selector, sel2){
 		              <form method="POST" action="{{URL::to('admin/Menu/saveorder')}}">
 							<input type="hidden" name="_token" value="{{ csrf_token() }}">
 				        	<input type="hidden" name="reorder" id="reorder" value="" />
-					        <button type="submit" class="btn btn-primary ">  Reorder Menu </button>	
+					        <button type="submit" class="btn btn-primary ">  {{trans('admin.reorder_menu')}} </button>	
 					 	</form>
 		        </div>
 
@@ -114,23 +114,23 @@ function update_out(selector, sel2){
 		        	<form id="Formcreate" method="POST" action="{{URL::to('admin/Menu/add')}}" class="form-horizontal">
 	                  <input type="hidden" name="_token" value="{{ csrf_token() }}">
 	                  <div class="form-group">
-	                    <label class="col-sm-3 control-label">Name / Title <span class="text-danger">*</span></label>
+	                    <label class="col-sm-3 control-label"> {{trans('admin.name_title')}} <span class="text-danger">*</span></label>
 	                    <div class="col-sm-8">
-	                      <input type="text" name="menu_name" class="form-control"  />
+	                      <input type="text" name="menu_name" class="form-control" placeholder="{{trans('admin.notice_name_menu')}}"  />
 	                    </div>
 	                  </div>
 
 	                  <div class="form-group">
 	                    <label class="col-sm-3 control-label">Link </label>
 	                    <div class="col-sm-8">
-	                      <input type="text" name="link" class="form-control"  />
+	                      <input type="text" name="link" class="form-control" placeholder="{{trans('admin.notice_link_menu')}}"  />
 	                    </div>
 	                  </div>
 	                  <div class="form-group">
-	                    <label class="col-sm-3 control-label">Page </label>
+	                    <label class="col-sm-3 control-label"> {{trans('admin.page')}}  </label>
 	                    <div class="col-sm-8">
 	                      <select id="select1" name="module_db" class="form-control">
-	                      	<option value=""> -- Select Page -- </option>
+	                      	<option value=""> -- {{trans('admin.select_page')}} -- </option>
 		                      @foreach($listpage as $p)
 								<option value="{{ $p->alias}}" @if($row['module']== $p->alias ) selected="selected" @endif >Page : {{ $p->title}}</option>
 							@endforeach
@@ -138,7 +138,6 @@ function update_out(selector, sel2){
 	                    </div>
 	                  </div>
 
-	                  <hr>
 
 	                  <div class="row">
 			                <div class="col-sm-6">

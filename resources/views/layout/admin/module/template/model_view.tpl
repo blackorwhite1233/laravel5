@@ -9,8 +9,8 @@ class {Controller} extends Model {
 	protected $primaryKey = '{Key}';
 	public $timestamps = false;
 
-	{Show};
+	{Show}
 
-	{required};
+	{required}
 
 }

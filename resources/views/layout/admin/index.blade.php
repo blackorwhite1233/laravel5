@@ -304,6 +304,7 @@
                 <li><a href="wysiwyg.html">Text Editor</a></li>
               </ul>
             </li>
+            <li><a href="{{URL::to('admin/Menu')}}"><i class="fa fa-server"></i> <span>{{trans('admin.menus')}}</span></a></li>
             <li class="nav-parent"><a href="#"><i class="fa fa-suitcase"></i> <span>UI Elements</span></a>
               <ul class="children">
                 <li><a href="buttons.html">Buttons</a></li>

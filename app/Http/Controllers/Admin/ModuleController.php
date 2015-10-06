@@ -84,6 +84,7 @@ class ModuleController extends Controller {
 	    	$data['module_type'] = "new";
 	    	$key = DB::select("SHOW KEYS FROM ".$data['module_db']." WHERE Key_name = 'PRIMARY'");
 	    	$data['module_db_key'] = $key[0]->Column_name;
+	    	unset($data['lang']);
 	    	$id = $this->model->insertGetId($data);
 	    	$this->inputLogs('Insert data successful with ID = "'.$id.'"');
 	    	return redirect('admin/module')->with('message',array('success'=>'Insert data successful with ID = "'.$id.'"'));
@@ -112,9 +113,11 @@ class ModuleController extends Controller {
 		}
 		//print_r(Request::all());die;
     	$obj = Module::find(Request::input('module_id'));
-    	$ctr = Request::input('module_name');
+    	$ctr = $obj->module_name;
+    	if($ctr == ''){
+    		return redirect('admin/module');
+    	}
     	$config = $this->dataModule($obj->module_db);
-    	//print_r($config);die;
     	$obj->module_config = serialize($config);
     	$obj->save();
     	$show = 'public static function getInfoTable(){
@@ -157,15 +160,19 @@ class ModuleController extends Controller {
 									'name' => '".$form['name']."',
 									'value' => '".$form['value']."',
 									'search' => '".$form['search']."',
-				";
+				],";
 			}
 		}
 		$show .= "];}";
 		if($req != ""){
 			$req = 'public static $rules=array(
 				'.$req.'
-				)';
+				);';
 		}
+
+		$addForm = $this->addForm($config['fields']);
+		$editForm = $this->editForm($config['fields']);
+		$detailData = $this->detailData($config['fields']);
 
     	$codes = array(
 			'Controller'		=> $obj->module_name,
@@ -177,21 +184,119 @@ class ModuleController extends Controller {
 			//'note'				=> $row->module_note ,
 			'Key'				=> $obj->module_db_key,
 			'Show'				=> $show,
+			'add'				=> $addForm,
+			'edit'				=> $editForm,
+			'detail'			=> $detailData,
 		);
 
 		$controller = file_get_contents(  base_path().'/resources/views/layout/admin/module/template/controller_view.tpl' );
 		//$form = file_get_contents(  app_path().'/views/admin/module/template/form.tpl' );
 		$model = file_get_contents(  base_path().'/resources/views/layout/admin/module/template/model_view.tpl' );
+		$index = file_get_contents(  base_path().'/resources/views/layout/admin/module/template/index_view.tpl' );
+		$add = file_get_contents(  base_path().'/resources/views/layout/admin/module/template/add_view.tpl' );
+		$edit = file_get_contents(  base_path().'/resources/views/layout/admin/module/template/edit_view.tpl' );
+		$detail = file_get_contents(  base_path().'/resources/views/layout/admin/module/template/detail_view.tpl' );
 
 		$build_controller 	= self::blend($controller,$codes);
 		$build_model 	= self::blend($model,$codes);
+		$build_index 	= self::blend($index,$codes);
+		$build_add 	= self::blend($add,$codes);
+		$build_edit 	= self::blend($edit,$codes);
+		$build_detail 	= self::blend($detail,$codes);
 
-		file_put_contents(  base_path()."/app/Http/Controllers/{$ctr}Controller.php" , $build_controller) ;
+		file_put_contents(  base_path()."/app/Http/Controllers/Admin/{$ctr}Controller.php" , $build_controller) ;
 		file_put_contents(  base_path()."/app/Model/{$ctr}.php" , $build_model) ;
-		echo "asdasd";die;
+		if(!is_dir(base_path()."/resources/views/layout/admin/{$ctr}"))
+			mkdir(base_path()."/resources/views/layout/admin/{$ctr}", 0700);
+		file_put_contents(  base_path()."/resources/views/layout/admin/{$ctr}/index.blade.php" , $build_index) ;
+		file_put_contents(  base_path()."/resources/views/layout/admin/{$ctr}/add.blade.php" , $build_add) ;
+		file_put_contents(  base_path()."/resources/views/layout/admin/{$ctr}/edit.blade.php" , $build_edit) ;
+		file_put_contents(  base_path()."/resources/views/layout/admin/{$ctr}/detail.blade.php" , $build_detail) ;
+
     	$this->inputLogs('Update data successful with ID = "'.$obj->module_id.'"');
     	return redirect('admin/module/edit?id='.$obj->module_id)->with('message',array('success'=>'Update data successful with ID = "'.$obj->module_id.'"'));
 
+	}
+
+	private function addForm($field){
+		$result = '';
+
+		foreach($field as $k=>$v){
+			if($v['form'] == 0)
+				continue;
+			if($v['type'] == "select" || $v['type'] == "select_nola"){
+				$result .= '<div class="form-group">
+                    <label class="col-sm-3 control-label"> '.$v['title'].'<span class="text-danger"></span></label>
+                    <div class="col-sm-8">
+                      <select id="select1" name="'.$v['name'].'" class="form-control">
+                    </select>
+                    </div>
+                  </div>';
+			}
+			else if($v['type'] == "radio"){
+				$result .= '<div class="form-group">
+                    <label class="col-sm-3 control-label"> '.$v['title'].' <span class="text-danger"></span></label>
+                    <div class="col-sm-8">
+                      <input type="radio" name="'.$v['name'].'" class="form-control"  />
+                    </div>
+                  </div>';
+			}else{
+				$result .= '<div class="form-group">
+                    <label class="col-sm-3 control-label"> '.$v['title'].' <span class="text-danger"></span></label>
+                    <div class="col-sm-8">
+                      <input type="text" name="'.$v['name'].'" class="form-control"  />
+                    </div>
+                  </div>';
+			}
+		}
+		return $result;
+	}
+
+	private function editForm($field){
+		$result = '';
+
+		foreach($field as $k=>$v){
+			if($v['form'] == 0)
+				continue;
+			if($v['type'] == "select" || $v['type'] == "select_nola"){
+				$result .= '<div class="form-group">
+                    <label class="col-sm-3 control-label"> '.$v['title'].'<span class="text-danger"></span></label>
+                    <div class="col-sm-8">
+                      <select id="select1" name="'.$v['name'].'" class="form-control">
+                    </select>
+                    </div>
+                  </div>';
+			}
+			else if($v['type'] == "radio"){
+				$result .= '<div class="form-group">
+                    <label class="col-sm-3 control-label"> '.$v['title'].' <span class="text-danger"></span></label>
+                    <div class="col-sm-8">
+                      <input type="radio" name="'.$v['name'].'" class="form-control"  />
+                    </div>
+                  </div>';
+			}else{
+				$result .= '<div class="form-group">
+                    <label class="col-sm-3 control-label"> '.$v['title'].' <span class="text-danger"></span></label>
+                    <div class="col-sm-8">
+                      <input type="text" name="'.$v['name'].'" class="form-control" value="{{$'.$v['name'].'}}" />
+                    </div>
+                  </div>';
+			}
+		}
+		return $result;
+	}
+
+	private function detailData($field){
+		$result = '';
+		foreach($field as $k=>$v){
+			if($v['form'] == 0)
+				continue;
+			$result .= '<tr>
+		                  <td align="right" width="30%">'.$v['title'].'</td>
+		                  <td>{{$'.$v['name'].'}}</td>
+		                </tr>';
+		}
+		return $result;
 	}
 
 	private function dataModule($table){

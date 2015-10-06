@@ -23,6 +23,8 @@ Route::get('home', 'HomeController@index');
 
 Route::get('maps', 'HomeController@map');
 
+Route::get('language', 'HomeController@language');
+
 Route::controllers([
 	'auth' => 'Auth\AuthController',
 	'password' => 'Auth\PasswordController',
@@ -38,5 +40,7 @@ Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'middleware' => 'auth
 		'group' => 'GroupController',
 		'module' => 'ModuleController',
 		'Menu' => 'MenuController',
+		'Post' => 'PostController',
+		'Page' => 'PageController',
 	]);
 });

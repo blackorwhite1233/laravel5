@@ -53,6 +53,8 @@ abstract class Controller extends BaseController {
 				if($access->is_detail == 1)
 					$flag = true;
 				break;
+			default:
+				$flag = true;
 		}
 		if(!$flag){
 			header('Location: '.Request::segment(0).'/admin/dashboard');die;
@@ -77,13 +79,14 @@ abstract class Controller extends BaseController {
 				}
 			}
 		}
-		//print_r($param);die;
+		//print_r($arr);die;
 		return array($param,$arr) ;
 	}
 
 	function postMultisearch()
 	{
 		$post = $_POST;
+		$module = Request::segment(2);
 		$items ='';
 		foreach($post as $item=>$val):
 			if($_POST[$item] !='' and $item !='_token' and $item !='md' and $item !='sort' and $item !='order' and $item !='rows'):
@@ -98,7 +101,20 @@ abstract class Controller extends BaseController {
 		if($order!='') $filter .= '&order='.$order; 
 		if($rows!='') $filter .= '&rows='.$rows; 
 
-		return redirect('/admin/group/'.'?search='.substr($items,0,strlen($items)-1).$filter);
+		return redirect('/admin/'.$module.'/'.'?search='.substr($items,0,strlen($items)-1).$filter);
+	}
+
+	static function getColumnTable( $table )
+	{	  
+        $columns = array();
+	    foreach(DB::select("SHOW COLUMNS FROM $table") as $column)
+        {
+           //print_r($column);
+		    $columns[$column->Field] = '';
+        }
+	  
+
+        return $columns;
 	}
 
 	function getDataPost($table)
@@ -148,5 +164,6 @@ abstract class Controller extends BaseController {
 		}
 		return $obj;
 	}
+
 
 }

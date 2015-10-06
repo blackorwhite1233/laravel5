@@ -41,12 +41,12 @@
             }
         });
         if(flag){
-          if(confirm('Are you sure delete rows ?')){
+          if(confirm('{{trans("admin.confirm_delete")}}')){
             $("#form").attr('action','{{ URL::to("admin/group/del")}}');
             $("#form").submit();
           }
         }else{
-          alert("You not choose any row");
+          alert('{{trans("admin.not_choose")}}');
         }
 
     });
@@ -126,12 +126,12 @@
           	</div>
           	<div class="col-sm-2">
           		<select id="select3" name="sort" class="form-control" style="width: 100%" data-placeholder="Order">
-                  <option value="DESC">DESC</option>
-                  <option value="ASC">ASC</option>
+                  <option value="DESC">{{trans('admin.desc')}}</option>
+                  <option value="ASC">{{trans('admin.asc')}}</option>
                 </select>
           	</div>
           	<div class="col-sm-3">
-          		<button class="btn btn-primary btn-quirk" id="submit_search">Go</button>
+          		<button class="btn btn-primary btn-quirk" id="submit_search">{{trans('admin.go')}}</button>
           	</div>
           	<div class="col-sm-3">
           		<div aria-live="polite" role="status" id="dataTable1_info" class="dataTables_info">{!!Helper::buildShowCount($rows,$count,$total)!!}</div>

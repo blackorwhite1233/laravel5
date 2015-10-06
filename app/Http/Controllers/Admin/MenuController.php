@@ -34,7 +34,7 @@ class MenuController extends Controller {
 	public function __construct()
 	{
 		parent::__construct();
-		$this->page['title'] = 'Manager Menu';
+		$this->page['title'] = trans('admin.manager_menu');
 		$this->model = new Menu();
 		$this->lang = Lang::getLocale();
 	}
@@ -109,7 +109,7 @@ class MenuController extends Controller {
 
 	public function getAdd(){
 		$data = array();
-		$this->page['title'] = 'Manager Menu';
+		$this->page['title'] = trans('admin.manager_menu');
 		return view("layout.admin.Menu.add",$data)->with('page', $this->page);
 	}
 
@@ -135,7 +135,7 @@ class MenuController extends Controller {
 		$id = Request::input('id');
 		$data = array();
 		$data = Menu::find($id);
-		$this->page['title'] = 'Manager Menu';
+		$this->page['title'] = trans('admin.manager_menu');
 		return view("layout.admin.Menu.edit",$data)->with('page', $this->page);
 	}
 

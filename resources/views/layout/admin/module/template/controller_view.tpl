@@ -115,6 +115,17 @@ class {Controller}Controller extends Controller {
 
 	}
 
+	public function getDetail(){
+		if(!Request::input('id') || Request::input('id') == ''){
+			return redirect('admin/{Controller}');
+		}
+		$id = Request::input('id');
+		$data = array();
+		$data = {Controller}::find($id);
+		$this->page['title'] = '{Title}';
+		return view("layout.admin.{Controller}.detail",$data)->with('page', $this->page);
+	}
+
 	public function postDel(){
 		$this->model->destroy(Request::input('destroy_id'));
 		$this->inputLogs("ID : ".implode(",",Request::input('destroy_id'))."  , Has Been Removed Successfull");

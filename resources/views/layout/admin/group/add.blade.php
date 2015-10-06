@@ -55,8 +55,8 @@
 
                   <div class="row">
                     <div class="col-sm-9 col-sm-offset-3">
-                      <input type="submit" class="btn btn-success btn-quirk btn-wide mr5" value="Submit" />
-                      <button type="reset" class="btn btn-quirk btn-wide btn-default">Reset</button>
+                      <input type="submit" class="btn btn-success btn-quirk btn-wide mr5" value="{{trans('admin.create')}}" />
+                      <button type="reset" class="btn btn-quirk btn-wide btn-default">{{trans('admin.reset')}}</button>
                     </div>
                   </div>
 
